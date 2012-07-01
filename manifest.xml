@@ -1,0 +1,23 @@
+<package>
+  <description brief="depth_image_rviz_plugin">
+
+     rviz plugin to visualize depth images.
+
+  </description>
+  <author>Julius Kammerl</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/rviz_plugin_tutorials</url>
+  <depend package="rviz"/>
+  <depend package="std_msgs"/>
+  <depend package="std_srvs"/>
+  <depend package="pcl_ros"/>
+  <depend package="pcl"/>
+  <depend package="pluginlib"/>
+  <depend package="cv_bridge"/>
+  <depend package="image_geometry"/>
+      
+  <export>
+      <rviz plugin="${prefix}/plugin_description.xml"/>
+  </export>
+</package>
