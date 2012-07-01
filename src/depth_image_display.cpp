@@ -833,10 +833,12 @@ void DepthImageDisplay::processMessages(const sensor_msgs::ImageConstPtr& depth_
         catch (cv_bridge::Exception& e)
         {
           setStatus(status_levels::Error, "Message", e.what() );
+          return;
         }
         catch (cv::Exception& e)
         {
           setStatus(status_levels::Error, "Message", e.what() );
+          return;
         }
 
         colorImgPtr = (unsigned char*) &cv_ptr->image.data[0];
@@ -947,6 +949,7 @@ void DepthImageDisplay::processMessages(const sensor_msgs::ImageConstPtr& depth_
       errorMsg << "Single-channel 32bit-floating point or 16bit raw depth images are required (input format is: "
           << depth_msg->encoding << ")";
       setStatus(status_levels::Error, "Message", errorMsg.str());
+      return;
     }
 
     newCloud_ = true;
