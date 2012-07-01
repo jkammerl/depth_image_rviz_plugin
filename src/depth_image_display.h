@@ -40,12 +40,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
 
-#include <OGRE/OgreMaterial.h>
-#include <OGRE/OgreRenderTargetListener.h>
-
-#include <pluginlib/class_loader.h>
-
-
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
 #include <image_transport/subscriber_filter.h>
@@ -62,22 +56,20 @@
 
 #include <rviz/panel_dock_widget.h>
 
-
 namespace ros
 {
-  class NodeHandle;
+class NodeHandle;
 }
 namespace rviz
 {
-  class RenderPanel;
-  class PanelDockWidget;
-  class PointCloudTransformer;
+class RenderPanel;
+class PanelDockWidget;
+class PointCloudTransformer;
 }
 namespace image_transport
 {
-  class ImageTransport;
+class ImageTransport;
 }
-
 
 using namespace rviz;
 using namespace message_filters::sync_policies;
@@ -85,14 +77,13 @@ using namespace message_filters::sync_policies;
 namespace depth_image_plugin
 {
 
-
 typedef boost::shared_ptr<rviz::PointCloudTransformer> PointCloudTransformerPtr;
 
 /**
  * \class DepthImageDisplay
  *
  */
-class DepthImageDisplay: public rviz::Display
+class DepthImageDisplay : public rviz::Display
 {
 Q_OBJECT
 public:
@@ -101,38 +92,78 @@ public:
 
   virtual void onInitialize();
 
-  const std::string& getDepthMapTopic() { return depth_topic_; }
+  const std::string& getDepthMapTopic()
+  {
+    return depth_topic_;
+  }
+
+
+  // Getter and setter for plugin properties:
   void setDepthMapTopic(const std::string& topic);
 
-  const std::string& getDepthMapTransport() { return depth_transport_; }
+  const std::string& getDepthMapTransport()
+  {
+    return depth_transport_;
+  }
+
   void setDepthMapTransport(const std::string& transport);
 
-  const std::string& getRGBTopic() { return rgb_topic_; }
+  const std::string& getRGBTopic()
+  {
+    return rgb_topic_;
+  }
+
   void setRGBTopic(const std::string& topic);
 
-  const std::string& getRGBTransport() { return rgb_transport_; }
+  const std::string& getRGBTransport()
+  {
+    return rgb_transport_;
+  }
+
   void setRGBTransport(const std::string& transport);
 
   bool isPointCloudVisible();
-  void setPointCloudVisible( bool visible );
 
-  bool isColoredPointCloudEnabled() {return coloredpointcloud_visible_;}
-  void setColoredPointCloudEnabled( bool visible );
+  void setPointCloudVisible(bool visible);
+
+  bool isColoredPointCloudEnabled()
+  {
+    return coloredpointcloud_visible_;
+  }
+  void setColoredPointCloudEnabled(bool visible);
 
   bool isDepthMapVisible();
-  void setDepthMapVisible( bool visible );
 
-  const float& getDepthFilter() { return maxDepth_; }
+  void setDepthMapVisible(bool visible);
+
+  const float& getDepthFilter()
+  {
+    return maxDepth_;
+  }
+
   void setDepthFilter(const float depth);
 
-  void createPointCloudProperties ();
+  void createPointCloudProperties();
 
-  void setPointCloudStyle( int style );
-  int getPointCloudStyle() { return pointcloud_style_; }
-  void setPointCloudBillboardSize( float size );
-  float getPointCloudBillboardSize() { return pointcloud_billboard_size_; }
-  float getPointCloudAlpha() { return pointcloud_alpha_; }
-  void setPointCloudAlpha( float alpha );
+  void setPointCloudStyle(int style);
+
+  int getPointCloudStyle()
+  {
+    return pointcloud_style_;
+  }
+  void setPointCloudBillboardSize(float size);
+
+  float getPointCloudBillboardSize()
+  {
+    return pointcloud_billboard_size_;
+  }
+
+  float getPointCloudAlpha()
+  {
+    return pointcloud_alpha_;
+  }
+
+  void setPointCloudAlpha(float alpha);
 
   // Overrides from Display
   virtual void createProperties();
@@ -140,29 +171,23 @@ public:
   virtual void reset();
 
   /** Set the incoming message queue size. */
-  void setQueueSize( int size );
+  void setQueueSize(int size);
   int getQueueSize();
 
 protected Q_SLOTS:
   /** Enables or disables this display via its DisplayWrapper. */
-  void setWrapperEnabled( bool enabled );
+  void setWrapperEnabled(bool enabled);
 
 protected:
   typedef std::vector<rviz::PointCloud::Point> V_Point;
 
-  void callbackDepthRGB(const sensor_msgs::ImageConstPtr& depth_msg,
-                        const sensor_msgs::ImageConstPtr& rgb_msg,
-                        const sensor_msgs::CameraInfoConstPtr& info_msg
-                        );
+  void callbackDepthRGB(const sensor_msgs::ImageConstPtr& depth_msg, const sensor_msgs::ImageConstPtr& rgb_msg,
+                        const sensor_msgs::CameraInfoConstPtr& info_msg);
 
-  void callbackDepth(const sensor_msgs::ImageConstPtr& depth_msg,
-                        const sensor_msgs::CameraInfoConstPtr& info_msg
-                        );
+  void callbackDepth(const sensor_msgs::ImageConstPtr& depth_msg, const sensor_msgs::CameraInfoConstPtr& info_msg);
 
-  void processMessages(const sensor_msgs::ImageConstPtr& depth_msg,
-                        const sensor_msgs::ImageConstPtr& rgb_msg,
-                        const sensor_msgs::CameraInfoConstPtr& info_msg
-                        );
+  void processMessages(const sensor_msgs::ImageConstPtr& depth_msg, const sensor_msgs::ImageConstPtr& rgb_msg,
+                       const sensor_msgs::CameraInfoConstPtr& info_msg);
 
   // overrides from Display
   virtual void onEnable();
@@ -204,8 +229,6 @@ protected:
 
   boost::mutex mutex_;
 
-
-
   // RVIZ properties
   ROSTopicStringPropertyWPtr depth_topic_property_;
   EditEnumPropertyWPtr depth_transport_property_;
@@ -230,9 +253,6 @@ protected:
   int pointcloud_style_;
   float pointcloud_billboard_size_;
   float pointcloud_alpha_;
-
-
-
 
   // Ogre scene graph
   Ogre::SceneManager* image_scene_manager_;
@@ -263,4 +283,4 @@ protected:
 
 } // namespace depth_image_plugin
 
- #endif
+#endif

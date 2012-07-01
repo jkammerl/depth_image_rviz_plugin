@@ -266,7 +266,8 @@ void DepthImageDisplay::subscribe()
     if (!depth_topic_.empty())
     {
 
-      if (rgb_topic_.empty() || (!coloredpointcloud_visible_)) {
+      if (rgb_topic_.empty() || (!coloredpointcloud_visible_))
+      {
         sub_depth_->subscribe(depth_it_, depth_topic_, 1, image_transport::TransportHints(depth_transport_));
         std::string info_topic = image_transport::getCameraInfoTopic(depth_topic_);
 
@@ -274,7 +275,9 @@ void DepthImageDisplay::subscribe()
 
         syncDepthCameraInfo_->connectInput(*sub_depth_, *sub_info_);
         syncDepthCameraInfo_->registerCallback(boost::bind(&DepthImageDisplay::callbackDepth, this, _1, _2));
-      } else {
+      }
+      else
+      {
         sub_depth_->subscribe(depth_it_, depth_topic_, 1, image_transport::TransportHints(depth_transport_));
         sub_rgb_->subscribe(rgb_it_, rgb_topic_, 1, image_transport::TransportHints(rgb_transport_));
 
