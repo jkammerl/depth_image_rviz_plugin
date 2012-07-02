@@ -259,6 +259,7 @@ void DepthImageDisplay::subscribe()
 
   {
     syncDepthCameraInfo_.reset(new SynchronizerDepthCameraInfo(SyncPolicyDepthCameraInfo(queue_size_)));
+    syncDepthRGBCameraInfo_.reset(new SynchronizerDepthRGBCameraInfo(SyncPolicyDepthRGBCameraInfo(queue_size_)));
     sub_depth_.reset(new image_transport::SubscriberFilter());
     sub_rgb_.reset(new image_transport::SubscriberFilter());
     sub_info_.reset(new message_filters::Subscriber<sensor_msgs::CameraInfo>());
@@ -309,6 +310,7 @@ void DepthImageDisplay::unsubscribe()
 
   {
     syncDepthCameraInfo_.reset(new SynchronizerDepthCameraInfo(SyncPolicyDepthCameraInfo(queue_size_)));
+    syncDepthRGBCameraInfo_.reset(new SynchronizerDepthRGBCameraInfo(SyncPolicyDepthRGBCameraInfo(queue_size_)));
     sub_depth_.reset(new image_transport::SubscriberFilter());
     sub_rgb_.reset(new image_transport::SubscriberFilter());
     sub_info_.reset(new message_filters::Subscriber<sensor_msgs::CameraInfo>());
@@ -956,6 +958,8 @@ void DepthImageDisplay::processMessages(const sensor_msgs::ImageConstPtr& depth_
     }
 
     newCloud_ = true;
+
+    setStatus(status_levels::Ok, "Message", "OK");
 
   }
 
