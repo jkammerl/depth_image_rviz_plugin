@@ -786,6 +786,8 @@ void DepthImageDisplay::processMessages(const sensor_msgs::ImageConstPtr& depth_
           << vis_manager_->getFrameManager()->getFixedFrame() << "]";
       setStatus(status_levels::Error, "Message", ss.str());
       return;
+    } else {
+      setStatus(status_levels::Ok, "Message", "OK");
     }
 
     transform = Ogre::Matrix4(orient);
@@ -965,7 +967,7 @@ void DepthImageDisplay::processMessages(const sensor_msgs::ImageConstPtr& depth_
   }
 
 
-  setStatus(status_levels::Ok, "Message", "OK");
+
 
 }
 
