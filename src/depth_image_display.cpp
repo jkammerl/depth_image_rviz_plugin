@@ -291,12 +291,13 @@ void DepthImageDisplay::subscribe()
       }
 
     }
-    setStatus(status_levels::Ok, "Topic", "OK");
   }
   catch (ros::Exception& e)
   {
     setStatus(status_levels::Error, "Topic", std::string("Error subscribing: ") + e.what());
   }
+
+
 
 }
 
@@ -395,6 +396,8 @@ void DepthImageDisplay::setColoredPointCloudEnabled(bool enabled)
   }
 
   coloredpointcloud_visible_ = enabled;
+
+  setDepthMapTopic(depth_topic_);
 
   propertyChanged(rgb_transport_property_);
 }
@@ -959,9 +962,10 @@ void DepthImageDisplay::processMessages(const sensor_msgs::ImageConstPtr& depth_
 
     newCloud_ = true;
 
-    setStatus(status_levels::Ok, "Message", "OK");
-
   }
+
+
+  setStatus(status_levels::Ok, "Message", "OK");
 
 }
 
