@@ -12,12 +12,13 @@ include(${QT_USE_FILE})
 add_definitions(-DQT_NO_KEYWORDS)
 
 qt4_wrap_cpp(MOC_FILES
- src/depth_image_display.h
+ src/depthmap2pointcloud.h
+ src/depthmap2pointcloudV2.h 
 )
 
 set(SOURCE_FILES
-  src/image_view.cpp
-  src/depth_image_display.cpp
+  src/depthmap2pointcloud.cpp
+  src/depthmap2pointcloudV2.cpp
   ${MOC_FILES}
 ) 
 
