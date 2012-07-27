@@ -1,18 +1,11 @@
 
 <library path="lib/libdepth_image_rviz_plugin">
-  <class name="depth_image_plugin/depth2pointcloud"
-         type="depth_image_plugin::Depth2PointCloud"
+  <class name="depth_cloud_plugin/DepthCloud"
+         type="depth_cloud_plugin::DepthCloudDisplay"
          base_class_type="rviz::Display">
-    <description>
-      Displays image messages containing depth maps.
-    </description>
-  </class>
-  <class name="depth_image_plugin/depth2pointcloudV2"
-         type="depth_image_plugin::Depth2PointCloudV2"
-         base_class_type="rviz::Display">
-    <description>
-      Displays image messages containing depth maps.
-    </description>
+  	<description>
+  	  Displays image messages containing depth maps.
+  	</description>
   </class>  
 </library>
   

@@ -27,10 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_DEPTHMAP_TO_POINTCLOUD_DISPLAY_H
-#define RVIZ_DEPTHMAP_TO_POINTCLOUD_DISPLAY_H
+#ifndef RVIZ_DEPTH_CLOUD_DISPLAY_H
+#define RVIZ_DEPTH_CLOUD_DISPLAY_H
 
-#include <QObject>
+
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
@@ -41,11 +41,9 @@
 #include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
+#include <tf/message_filter.h>
 
 #include <image_geometry/pinhole_camera_model.h>
-
-#include <ros/spinner.h>
-#include <ros/callback_queue.h>
 
 #include "rviz/properties/enum_property.h"
 #include "rviz/properties/float_property.h"
@@ -53,25 +51,43 @@
 #include "rviz/properties/int_property.h"
 #include "rviz/properties/ros_topic_property.h"
 
-#include <rviz/image/image_display_base.h>
-#include <rviz/ogre_helpers/point_cloud.h>
+#include <rviz/display.h>
+
+#include <rviz/default_plugin/point_cloud_common.h>
 
 using namespace rviz;
 using namespace message_filters::sync_policies;
 
-namespace depth_image_plugin
+namespace depth_cloud_plugin
 {
 
+// Encapsulate differences between processing float and uint16_t depths
+template<typename T> struct DepthTraits {};
+
+template<>
+struct DepthTraits<uint16_t>
+{
+  static inline bool valid(float depth) { return depth != 0.0; }
+  static inline float toMeters(uint16_t depth) { return depth * 0.001f; } // originally mm
+};
+
+template<>
+struct DepthTraits<float>
+{
+  static inline bool valid(float depth) { return std::isfinite(depth); }
+  static inline float toMeters(float depth) { return depth; }
+};
+
 /**
- * \class Depth2PointCloud
+ * \class DepthCloudDisplay
  *
  */
-class Depth2PointCloud : public rviz::ImageDisplayBase
+class DepthCloudDisplay : public rviz::Display
 {
 Q_OBJECT
 public:
-  Depth2PointCloud();
-  virtual ~Depth2PointCloud();
+  DepthCloudDisplay();
+  virtual ~DepthCloudDisplay();
 
   virtual void onInitialize();
 
@@ -80,9 +96,19 @@ public:
   virtual void reset();
 
 protected Q_SLOTS:
-  virtual void updateQueueSize();
+  void updateQueueSize();
+  /** @brief Fill list of available and working transport options */
+  void fillTransportOptionList(EnumProperty* property);
+
+  /** @brief Update topic and resubscribe */
+  virtual void updateTopic();
+
+
 
 protected:
+  void scanForTransportSubscriberPlugins();
+
+
   typedef std::vector<rviz::PointCloud::Point> V_Point;
 
   virtual void processMessage(const sensor_msgs::Image::ConstPtr& msg);
@@ -99,6 +125,8 @@ protected:
   void unsubscribe();
 
   void clear();
+
+  uint32_t messages_received_;
 
   boost::mutex mutex_;
 
@@ -119,28 +147,30 @@ protected:
 
   boost::shared_ptr<SynchronizerDepthRGB> syncDepthRGB_;
 
+  Ogre::SceneNode* pointcloud_scene_node_;
+
   IntProperty* queue_size_property_;
   u_int32_t queue_size_;
 
-  BoolProperty* depthCameraEnabled_property_;
-  BoolProperty* pointCloudEnabled_property_;
+  RosTopicProperty* depth_topic_property_;
+  EnumProperty* depth_transport_property_;
 
   RosTopicProperty* rgb_topic_property_;
   EnumProperty* rgb_transport_property_;
 
-  image_geometry::PinholeCameraModel* cameraModel_;
+  PointCloudCommon* pointcloud_common_;
 
-  // Ogre scene graph
-  Ogre::SceneNode* pc_scene_node_;
+  std::set<std::string> transport_plugin_types_;
 
-  rviz::PointCloud* cloud_;
-  bool newCloud_;
-  V_Point new_points_;
-
-  ros::AsyncSpinner spinner_;
-  ros::CallbackQueue cbqueue_;
+  // Conversion of floating point and uint16 depth images to point clouds (with color)
+  template<typename T>
+  void convert(const sensor_msgs::ImageConstPtr& depth_msg,
+               const sensor_msgs::ImageConstPtr& color_msg,
+               const sensor_msgs::CameraInfo::ConstPtr camInfo_msg,
+               sensor_msgs::PointCloud2Ptr& cloud_msg);
 };
 
-} // namespace depth_image_plugin
+
+} // namespace depth_cloud_plugin
 
 #endif //RVIZ_DEPTHMAP_TO_POINTCLOUD_DISPLAY_H
